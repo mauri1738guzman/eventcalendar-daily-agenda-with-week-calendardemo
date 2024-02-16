@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+        // Ignore this in your implementation
+        window.isMbscDemo = true;
+    </script>
+
+    <title>
+        Compact daily schedule
+    </title>
+
+    <!-- Mobiscroll JS and CSS Includes -->
+    <link rel="stylesheet" href="css/mobiscroll.javascript.min.css">
+    <script src="js/mobiscroll.javascript.min.js"></script>
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body,
+        html {
+            height: 100%;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div mbsc-page class="demo-daily-agenda-with-week-calendar">
+        <div style="height:100%">
+            <div id="demo-daily-events"></div>
+        </div>
+    </div>
+
+    <script>
+        mobiscroll.setOptions({
+            theme: 'ios',
+            locale: mobiscroll.localeEn
+        });
+
+        var inst = mobiscroll.eventcalendar('#demo-daily-events', {
+            locale: mobiscroll.localeEn,
+            theme: 'ios',
+            themeVariant: 'light',
+            view: {
+                calendar: {
+                    type: 'week'
+                },
+                agenda: {
+                    type: 'day'
+                }
+            },
+            onEventClick: function(event, inst) {
+                mobiscroll.toast({
+                    message: event.event.title
+                });
+            }
+        });
+
+        // Fetch events from PHP proxy
+        fetch('proxy.php')
+            .then(response => response.text())
+            .then(data => {
+                // Parse the data to extract dates
+                const regex = /<td class="day" data-day="(\d{4}-\d{2}-\d{2})">/g;
+                let match;
+                while ((match = regex.exec(data)) !== null) {
+                    // match[1] contains the date in YYYY-MM-DD format
+                    console.log(match[1]);
+                }
+            })
+            .catch(error => console.error('Error fetching events:', error));
+    </script>
+
+</body>
+
+</html>
